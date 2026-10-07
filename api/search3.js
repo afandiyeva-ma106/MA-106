@@ -11,19 +11,22 @@ export default async function handler(req, res) {
 
   if (!q) {
     return res.status(400).json({
-      error: "Axtarış mətni yoxdur"
+      error: "Axtarış mətni yoxdur",
+      sources: []
     });
   }
 
   try {
     const url =
-      "https://www.google.com/search?hl=az&num=5&q=" +
+      "https://html.duckduckgo.com/html/?q=" +
       encodeURIComponent('"' + q + '"');
 
     const response = await fetch(url, {
+      method: "GET",
       headers: {
         "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36"
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
+        "Accept-Language": "az-AZ,az;q=0.9,en;q=0.8"
       }
     });
 
@@ -31,23 +34,23 @@ export default async function handler(req, res) {
 
     const sources = [];
 
-    const matches = html.matchAll(
-      /https?:\/\/[^"'<> ]+/g
-    );
+    const regex =
+      /class="result__a"[^>]*href="([^"]+)"/gi;
 
-    for (const match of matches) {
-      let link = match[0];
+    let match;
 
-      link = link
-        .replace(/\\u003d/g, "=")
-        .replace(/\\u0026/g, "&");
+    while ((match = regex.exec(html)) !== null) {
+      let link = match[1];
+
+      link = link.replace(/&amp;/g, "&");
 
       if (
-        !link.includes("google.com") &&
-        !link.includes("gstatic.com") &&
-        !sources.includes(link)
+        link.startsWith("http") &&
+        !link.includes("duckduckgo.com")
       ) {
-        sources.push(link);
+        if (!sources.includes(link)) {
+          sources.push(link);
+        }
       }
 
       if (sources.length >= 5) break;
@@ -61,7 +64,7 @@ export default async function handler(req, res) {
   } catch (error) {
     return res.status(500).json({
       error: "Axtarış alınmadı",
-      details: error.message
+      sources: []
     });
   }
 }
