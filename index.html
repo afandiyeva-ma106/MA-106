@@ -392,7 +392,162 @@ MA-106 · Plagiat Analiz Sistemi · Qrup işi
 </div>
 
 <script>
-const textInput=document.getElementById("textInput");
+const textInput = document.getElementById("textInput");
+const counter = document.getElementById("counter");
+
+textInput.addEventListener("input", updateCounter);
+
+function updateCounter() {
+    const text = textInput.value.trim();
+    const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+
+    counter.textContent = words + " söz · " + text.length + " simvol";
+}
+
+async function analyzeText() {
+
+    const text = textInput.value.trim();
+
+    if (!text) {
+        alert("Zəhmət olmasa əvvəlcə mətn daxil edin.");
+        return;
+    }
+
+    const words = text.split(/\s+/).filter(Boolean);
+
+    const sentences = text
+        .split(/[.!?]+/)
+        .map(s => s.trim())
+        .filter(Boolean);
+
+    document.getElementById("result").classList.add("show");
+    document.getElementById("statusBadge").textContent = "Mənbələr axtarılır...";
+    document.getElementById("description").textContent =
+        "Mətn internet mənbələri ilə müqayisə edilir...";
+    document.getElementById("sourceList").innerHTML =
+        '<div class="empty">Mənbələr axtarılır...</div>';
+
+    document.getElementById("wordCount").textContent = words.length;
+    document.getElementById("sentenceCount").textContent = sentences.length;
+
+    let results = [];
+
+    for (const sentence of sentences.slice(0, 5)) {
+
+        if (sentence.length < 20) continue;
+
+        try {
+
+            const response = await fetch(
+                "https://ma106.vercel.app/api/search2?q=" +
+                encodeURIComponent(sentence)
+            );
+
+            const data = await response.json();
+
+            if (data.sources && data.sources.length) {
+                results.push({
+                    sentence: sentence,
+                    sources: data.sources
+                });
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const sourceList = document.getElementById("sourceList");
+
+    sourceList.innerHTML = "";
+
+    let score = 0;
+
+    if (results.length > 0) {
+        score = Math.min(
+            95,
+            Math.round((results.length / Math.max(1, sentences.length)) * 100)
+        );
+    }
+
+    document.getElementById("score").textContent = score + "%";
+    document.getElementById("progress").style.width = score + "%";
+
+    if (score >= 60) {
+        document.getElementById("evaluation").textContent = "Yüksək";
+        document.getElementById("statusBadge").textContent = "Yüksək oxşarlıq";
+        document.getElementById("description").textContent =
+            "Mətnin bəzi hissələri internet mənbələri ilə uyğunluq göstərir.";
+    } else if (score >= 30) {
+        document.getElementById("evaluation").textContent = "Orta";
+        document.getElementById("statusBadge").textContent = "Orta oxşarlıq";
+        document.getElementById("description").textContent =
+            "Mətn daxilində müəyyən uyğunluqlar aşkar edildi.";
+    } else {
+        document.getElementById("evaluation").textContent = "Aşağı";
+        document.getElementById("statusBadge").textContent = "Aşağı oxşarlıq";
+        document.getElementById("description").textContent =
+            "Əhəmiyyətli uyğunluq aşkar edilmədi.";
+    }
+
+    if (!results.length) {
+
+        sourceList.innerHTML = `
+            <div class="empty">
+                Uyğun internet mənbəyi tapılmadı.
+            </div>
+        `;
+
+    } else {
+
+        results.forEach(item => {
+
+            const box = document.createElement("div");
+            box.className = "source";
+
+            box.innerHTML = `
+                <div class="sentence">
+                    “${escapeHTML(item.sentence)}”
+                </div>
+
+                <div class="source-name">
+                    Tapılan mümkün mənbələr
+                </div>
+
+                ${item.sources.map(link => `
+                    <a href="${link}" target="_blank">
+                        Mənbəyə keç →
+                    </a><br>
+                `).join("")}
+            `;
+
+            sourceList.appendChild(box);
+        });
+    }
+
+    window.scrollTo({
+        top: document.getElementById("result").offsetTop - 20,
+        behavior: "smooth"
+    });
+}
+
+function clearText() {
+
+    textInput.value = "";
+    updateCounter();
+
+    document.getElementById("result").classList.remove("show");
+}
+
+function escapeHTML(text) {
+
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 </script>
 
 </body>
