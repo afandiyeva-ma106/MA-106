@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plagiat Analiz Sistemi</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 20% 20%, #ffd9e8 0%, transparent 35%),
+        radial-gradient(circle at 80% 10%, #f8c8dc 0%, transparent 30%),
+        linear-gradient(135deg, #fff5f8, #f9dce8);
+      color: #402b35;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      box-shadow: 0 20px 50px rgba(125, 67, 91, 0.12);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border-radius: 30px;
+    }
+
+    header {
+      padding: 35px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 38px;
+      margin-bottom: 10px;
+      color: #5b3045;
+    }
+
+    header p {
+      color: #80576a;
+      font-size: 16px;
+    }
+
+    .editor {
+      padding: 30px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 320px;
+      resize: vertical;
+      border: 1px solid rgba(255,255,255,.8);
+      outline: none;
+      border-radius: 22px;
+      padding: 22px;
+      font-size: 16px;
+      line-height: 1.7;
+      color: #432f38;
+      background: rgba(255,255,255,.58);
+      box-shadow: inset 0 2px 10px rgba(100,50,70,.04);
+    }
+
+    textarea:focus {
+      border-color: #d98aaa;
+      box-shadow: 0 0 0 4px rgba(217,138,170,.15);
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      padding: 14px 24px;
+      border-radius: 18px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      color: #512d3d;
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(255,255,255,.8);
+      box-shadow: 0 8px 25px rgba(100,50,70,.1);
+      backdrop-filter: blur(15px);
+      transition: .25s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,.8);
+    }
+
+    .primary {
+      background: linear-gradient(135deg, #d987a9, #c96f97);
+      color: white;
+    }
+
+    .result {
+      margin-top: 25px;
+      padding: 30px;
+      display: none;
+    }
+
+    .result h2 {
+      margin-bottom: 20px;
+      color: #5b3045;
+    }
+
+    .score {
+      font-size: 55px;
+      font-weight: 700;
+      color: #c96f97;
+      margin-bottom: 10px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 15px;
+      background: rgba(255,255,255,.6);
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 15px 0 25px;
+    }
+
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #e7a2bd, #c96f97);
+      transition: 1s;
+    }
+
+    .info {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .card {
+      padding: 20px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.42);
+      border: 1px solid rgba(255,255,255,.6);
+    }
+
+    .card strong {
+      display: block;
+      font-size: 25px;
+      margin-top: 8px;
+      color: #c96f97;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 25px;
+      color: #896575;
+      font-size: 13px;
+    }
+
+    @media (max-width: 700px) {
+      header h1 {
+        font-size: 28px;
+      }
+
+      .info {
+        grid-template-columns: 1fr;
+      }
+
+      body {
+        padding: 20px 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <header class="glass">
+      <h1>Plagiat Analiz Sistemi</h1>
+      <p>Mətninizi analiz edin və oxşarlıq səviyyəsini müəyyənləşdirin.</p>
+    </header>
+
+    <section class="glass editor">
+
+      <textarea id="textInput"
+        placeholder="Yoxlamaq istədiyiniz mətni buraya daxil edin..."></textarea>
+
+      <div class="actions">
+        <button class="primary" onclick="analyzeText()">
+          Mətni analiz et
+        </button>
+
+        <button onclick="clearText()">
+          Təmizlə
+        </button>
+      </div>
+
+    </section>
+
+    <section class="glass result" id="result">
+
+      <h2>Analiz nəticəsi</h2>
+
+      <div class="score" id="score">0%</div>
+
+      <p>Plagiat / oxşarlıq ehtimalı</p>
+
+      <div class="bar">
+        <div class="progress" id="progress"></div>
+      </div>
+
+      <div class="info">
+
+        <div class="card">
+          Söz sayı
+          <strong id="wordCount">0</strong>
+        </div>
+
+        <div class="card">
+          Cümlə sayı
+          <strong id="sentenceCount">0</strong>
+        </div>
+
+        <div class="card">
+          Status
+          <strong id="status">—</strong>
+        </div>
+
+      </div>
+
+    </section>
+
+    <footer>
+      MA-106 · Plagiat Analiz Sistemi · Qrup işi
+    </footer>
+
+  </div>
+
+  <script>
+    function analyzeText() {
+
+      const text = document.getElementById("textInput").value.trim();
+
+      if (!text) {
+        alert("Zəhmət olmasa əvvəlcə mətn daxil edin.");
+        return;
+      }
+
+      const words = text.split(/\s+/).filter(Boolean);
+      const sentences = text.split(/[.!?]+/).filter(s => s.trim());
+
+      /*
+        Hazırkı mərhələdə bu yalnız demo analizidir.
+        Növbəti mərhələdə real plagiat yoxlama sistemi
+        və mənbə müqayisəsi əlavə ediləcək.
+      */
+
+      let score = Math.floor(Math.random() * 31) + 10;
+
+      document.getElementById("score").textContent = score + "%";
+      document.getElementById("progress").style.width = score + "%";
+
+      document.getElementById("wordCount").textContent = words.length;
+      document.getElementById("sentenceCount").textContent = sentences.length;
+
+      let status = "Aşağı";
+
+      if (score >= 60) {
+        status = "Yüksək";
+      } else if (score >= 30) {
+        status = "Orta";
+      }
+
+      document.getElementById("status").textContent = status;
+      document.getElementById("result").style.display = "block";
+    }
+
+    function clearText() {
+      document.getElementById("textInput").value = "";
+      document.getElementById("result").style.display = "none";
+    }
+  </script>
+
+</body>
+</html>
