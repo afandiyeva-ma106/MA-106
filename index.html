@@ -1,301 +1,556 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plagiat Analiz Sistemi</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MA-106 • Plagiat Analizi</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at 20% 20%, #ffd9e8 0%, transparent 35%),
-        radial-gradient(circle at 80% 10%, #f8c8dc 0%, transparent 30%),
-        linear-gradient(135deg, #fff5f8, #f9dce8);
-      color: #402b35;
-      padding: 40px 20px;
-    }
+body{
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+min-height:100vh;
+color:#422b36;
+background:
+radial-gradient(circle at 10% 10%,#ffd7e7 0,transparent 32%),
+radial-gradient(circle at 90% 15%,#f5bfd5 0,transparent 30%),
+linear-gradient(135deg,#fff8fb,#f8dce8);
+padding:25px;
+}
 
-    .container {
-      max-width: 1100px;
-      margin: auto;
-    }
+.container{max-width:1100px;margin:auto}
 
-    .glass {
-      background: rgba(255, 255, 255, 0.45);
-      border: 1px solid rgba(255, 255, 255, 0.65);
-      box-shadow: 0 20px 50px rgba(125, 67, 91, 0.12);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border-radius: 30px;
-    }
+.glass{
+background:rgba(255,255,255,.48);
+border:1px solid rgba(255,255,255,.75);
+box-shadow:0 20px 60px rgba(120,55,80,.12);
+backdrop-filter:blur(25px);
+-webkit-backdrop-filter:blur(25px);
+border-radius:30px;
+}
 
-    header {
-      padding: 35px;
-      margin-bottom: 25px;
-      text-align: center;
-    }
+header{
+padding:35px;
+text-align:center;
+margin-bottom:20px;
+}
 
-    header h1 {
-      font-size: 38px;
-      margin-bottom: 10px;
-      color: #5b3045;
-    }
+.logo{
+width:65px;height:65px;
+margin:0 auto 15px;
+border-radius:20px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+background:rgba(255,255,255,.6);
+box-shadow:0 10px 30px rgba(130,60,90,.12);
+}
 
-    header p {
-      color: #80576a;
-      font-size: 16px;
-    }
+h1{
+font-size:35px;
+color:#613448;
+margin-bottom:8px;
+}
 
-    .editor {
-      padding: 30px;
-    }
+.subtitle{color:#866172}
 
-    textarea {
-      width: 100%;
-      min-height: 320px;
-      resize: vertical;
-      border: 1px solid rgba(255,255,255,.8);
-      outline: none;
-      border-radius: 22px;
-      padding: 22px;
-      font-size: 16px;
-      line-height: 1.7;
-      color: #432f38;
-      background: rgba(255,255,255,.58);
-      box-shadow: inset 0 2px 10px rgba(100,50,70,.04);
-    }
+.editor{padding:25px}
 
-    textarea:focus {
-      border-color: #d98aaa;
-      box-shadow: 0 0 0 4px rgba(217,138,170,.15);
-    }
+.label{
+display:block;
+font-weight:700;
+margin-bottom:12px;
+color:#603547;
+}
 
-    .actions {
-      display: flex;
-      gap: 12px;
-      margin-top: 18px;
-      flex-wrap: wrap;
-    }
+textarea{
+width:100%;
+height:310px;
+resize:vertical;
+border:none;
+outline:none;
+border-radius:23px;
+padding:22px;
+font-size:16px;
+line-height:1.7;
+color:#422b36;
+background:rgba(255,255,255,.65);
+box-shadow:inset 0 2px 15px rgba(100,50,70,.05);
+}
 
-    button {
-      border: none;
-      padding: 14px 24px;
-      border-radius: 18px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 600;
-      color: #512d3d;
-      background: rgba(255,255,255,.55);
-      border: 1px solid rgba(255,255,255,.8);
-      box-shadow: 0 8px 25px rgba(100,50,70,.1);
-      backdrop-filter: blur(15px);
-      transition: .25s;
-    }
+textarea:focus{
+box-shadow:0 0 0 4px rgba(205,117,153,.15);
+}
 
-    button:hover {
-      transform: translateY(-2px);
-      background: rgba(255,255,255,.8);
-    }
+.bottom{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-top:15px;
+gap:10px;
+flex-wrap:wrap;
+}
 
-    .primary {
-      background: linear-gradient(135deg, #d987a9, #c96f97);
-      color: white;
-    }
+.counter{color:#8b6675;font-size:14px}
 
-    .result {
-      margin-top: 25px;
-      padding: 30px;
-      display: none;
-    }
+.buttons{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
 
-    .result h2 {
-      margin-bottom: 20px;
-      color: #5b3045;
-    }
+button{
+border:1px solid rgba(255,255,255,.8);
+border-radius:17px;
+padding:13px 21px;
+font-weight:700;
+font-size:14px;
+cursor:pointer;
+color:#563244;
+background:rgba(255,255,255,.6);
+box-shadow:0 8px 25px rgba(100,50,70,.1);
+transition:.2s;
+}
 
-    .score {
-      font-size: 55px;
-      font-weight: 700;
-      color: #c96f97;
-      margin-bottom: 10px;
-    }
+button:hover{transform:translateY(-2px)}
 
-    .bar {
-      width: 100%;
-      height: 15px;
-      background: rgba(255,255,255,.6);
-      border-radius: 20px;
-      overflow: hidden;
-      margin: 15px 0 25px;
-    }
+.primary{
+color:white;
+background:linear-gradient(135deg,#d88bab,#bf668f);
+}
 
-    .progress {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #e7a2bd, #c96f97);
-      transition: 1s;
-    }
+.result{
+display:none;
+margin-top:20px;
+padding:28px;
+}
 
-    .info {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-    }
+.result.show{display:block}
 
-    .card {
-      padding: 20px;
-      border-radius: 20px;
-      background: rgba(255,255,255,.42);
-      border: 1px solid rgba(255,255,255,.6);
-    }
+.result-title{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
+flex-wrap:wrap;
+margin-bottom:20px;
+}
 
-    .card strong {
-      display: block;
-      font-size: 25px;
-      margin-top: 8px;
-      color: #c96f97;
-    }
+.result h2{color:#613448}
 
-    footer {
-      text-align: center;
-      margin-top: 25px;
-      color: #896575;
-      font-size: 13px;
-    }
+.badge{
+padding:9px 15px;
+border-radius:15px;
+background:rgba(255,255,255,.55);
+font-size:13px;
+font-weight:700;
+}
 
-    @media (max-width: 700px) {
-      header h1 {
-        font-size: 28px;
-      }
+.score-area{
+display:grid;
+grid-template-columns:190px 1fr;
+gap:25px;
+align-items:center;
+margin-bottom:25px;
+}
 
-      .info {
-        grid-template-columns: 1fr;
-      }
+.score{
+width:170px;
+height:170px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+background:rgba(255,255,255,.5);
+border:10px solid rgba(211,126,159,.3);
+}
 
-      body {
-        padding: 20px 12px;
-      }
-    }
-  </style>
+.score strong{
+font-size:43px;
+color:#c4678d;
+}
+
+.score small{color:#896474}
+
+.bar{
+height:14px;
+border-radius:20px;
+background:rgba(255,255,255,.6);
+overflow:hidden;
+margin:12px 0 8px;
+}
+
+.progress{
+height:100%;
+width:0;
+border-radius:20px;
+background:linear-gradient(90deg,#e6a5be,#bd628b);
+transition:1s;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:12px;
+margin-bottom:25px;
+}
+
+.stat{
+padding:18px;
+border-radius:20px;
+background:rgba(255,255,255,.42);
+}
+
+.stat span{
+font-size:13px;
+color:#896474;
+}
+
+.stat strong{
+display:block;
+font-size:24px;
+margin-top:5px;
+color:#bf668f;
+}
+
+.sources h3{
+margin-bottom:12px;
+color:#613448;
+}
+
+.source{
+padding:17px;
+border-radius:19px;
+background:rgba(255,255,255,.45);
+margin-bottom:10px;
+border:1px solid rgba(255,255,255,.65);
+}
+
+.source .sentence{
+font-weight:600;
+line-height:1.5;
+margin-bottom:8px;
+}
+
+.source .source-name{
+font-size:13px;
+color:#886171;
+}
+
+.source a{
+display:inline-block;
+margin-top:8px;
+color:#bd5e88;
+font-weight:700;
+text-decoration:none;
+}
+
+.source a:hover{text-decoration:underline}
+
+.note{
+margin-top:20px;
+padding:15px 17px;
+border-radius:18px;
+background:rgba(255,245,249,.65);
+font-size:13px;
+line-height:1.6;
+color:#795667;
+}
+
+.empty{
+padding:25px;
+text-align:center;
+color:#876373;
+}
+
+footer{
+text-align:center;
+padding:25px 0 10px;
+font-size:13px;
+color:#896575;
+}
+
+@media(max-width:700px){
+body{padding:14px}
+
+header{padding:25px 18px}
+
+h1{font-size:28px}
+
+.editor,.result{padding:18px}
+
+.score-area{grid-template-columns:1fr}
+
+.score{margin:auto}
+
+.stats{grid-template-columns:1fr}
+
+textarea{height:280px}
+}
+</style>
 </head>
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <header class="glass">
-      <h1>Plagiat Analiz Sistemi</h1>
-      <p>Mətninizi analiz edin və oxşarlıq səviyyəsini müəyyənləşdirin.</p>
-    </header>
+<header class="glass">
+<div class="logo">✦</div>
+<h1>Plagiat Analizi</h1>
+<p class="subtitle">
+Mətninizi analiz edin, oxşarlıq səviyyəsini və uyğunluqları görün.
+</p>
+</header>
 
-    <section class="glass editor">
+<section class="glass editor">
 
-      <textarea id="textInput"
-        placeholder="Yoxlamaq istədiyiniz mətni buraya daxil edin..."></textarea>
+<label class="label">Yoxlanılacaq mətn</label>
 
-      <div class="actions">
-        <button class="primary" onclick="analyzeText()">
-          Mətni analiz et
-        </button>
+<textarea id="textInput"
+placeholder="Mətninizi buraya yerləşdirin..."></textarea>
 
-        <button onclick="clearText()">
-          Təmizlə
-        </button>
-      </div>
+<div class="bottom">
 
-    </section>
+<div class="counter" id="counter">
+0 söz · 0 simvol
+</div>
 
-    <section class="glass result" id="result">
+<div class="buttons">
+<button onclick="clearText()">Təmizlə</button>
+<button class="primary" onclick="analyzeText()">✦ Mətni yoxla</button>
+</div>
 
-      <h2>Analiz nəticəsi</h2>
+</div>
 
-      <div class="score" id="score">0%</div>
+</section>
 
-      <p>Plagiat / oxşarlıq ehtimalı</p>
+<section class="glass result" id="result">
 
-      <div class="bar">
-        <div class="progress" id="progress"></div>
-      </div>
+<div class="result-title">
+<h2>Analiz nəticəsi</h2>
+<div class="badge" id="statusBadge">Analiz tamamlandı</div>
+</div>
 
-      <div class="info">
+<div class="score-area">
 
-        <div class="card">
-          Söz sayı
-          <strong id="wordCount">0</strong>
-        </div>
+<div class="score">
+<strong id="score">0%</strong>
+<small>oxşarlıq</small>
+</div>
 
-        <div class="card">
-          Cümlə sayı
-          <strong id="sentenceCount">0</strong>
-        </div>
+<div>
+<h3>Ümumi oxşarlıq səviyyəsi</h3>
+<div class="bar">
+<div class="progress" id="progress"></div>
+</div>
+<p id="description"></p>
+</div>
 
-        <div class="card">
-          Status
-          <strong id="status">—</strong>
-        </div>
+</div>
 
-      </div>
+<div class="stats">
 
-    </section>
+<div class="stat">
+<span>Söz sayı</span>
+<strong id="wordCount">0</strong>
+</div>
 
-    <footer>
-      MA-106 · Plagiat Analiz Sistemi · Qrup işi
-    </footer>
+<div class="stat">
+<span>Cümlə sayı</span>
+<strong id="sentenceCount">0</strong>
+</div>
 
-  </div>
+<div class="stat">
+<span>Qiymətləndirmə</span>
+<strong id="evaluation">—</strong>
+</div>
 
-  <script>
-    function analyzeText() {
+</div>
 
-      const text = document.getElementById("textInput").value.trim();
+<div class="sources">
 
-      if (!text) {
-        alert("Zəhmət olmasa əvvəlcə mətn daxil edin.");
-        return;
-      }
+<h3>Uyğunluqlar və mümkün mənbələr</h3>
 
-      const words = text.split(/\s+/).filter(Boolean);
-      const sentences = text.split(/[.!?]+/).filter(s => s.trim());
+<div id="sourceList"></div>
 
-      /*
-        Hazırkı mərhələdə bu yalnız demo analizidir.
-        Növbəti mərhələdə real plagiat yoxlama sistemi
-        və mənbə müqayisəsi əlavə ediləcək.
-      */
+</div>
 
-      let score = Math.floor(Math.random() * 31) + 10;
+<div class="note">
+<strong>Qeyd:</strong> Bu mərhələdə nəticə demo analiz əsasında hesablanır.
+Real internet mənbələrinin avtomatik axtarışı növbəti mərhələdə əlavə ediləcək.
+</div>
 
-      document.getElementById("score").textContent = score + "%";
-      document.getElementById("progress").style.width = score + "%";
+</section>
 
-      document.getElementById("wordCount").textContent = words.length;
-      document.getElementById("sentenceCount").textContent = sentences.length;
+<footer>
+MA-106 · Plagiat Analiz Sistemi · Qrup işi
+</footer>
 
-      let status = "Aşağı";
+</div>
 
-      if (score >= 60) {
-        status = "Yüksək";
-      } else if (score >= 30) {
-        status = "Orta";
-      }
+<script>
 
-      document.getElementById("status").textContent = status;
-      document.getElementById("result").style.display = "block";
-    }
+const textInput=document.getElementById("textInput");
+const counter=document.getElementById("counter");
 
-    function clearText() {
-      document.getElementById("textInput").value = "";
-      document.getElementById("result").style.display = "none";
-    }
-  </script>
+textInput.addEventListener("input",updateCounter);
+
+function updateCounter(){
+
+const text=textInput.value.trim();
+
+const words=text?
+text.split(/\s+/).filter(Boolean).length:0;
+
+counter.textContent=
+words+" söz · "+text.length+" simvol";
+}
+
+function analyzeText(){
+
+const text=textInput.value.trim();
+
+if(!text){
+alert("Zəhmət olmasa əvvəlcə mətn daxil edin.");
+return;
+}
+
+const words=text.split(/\s+/).filter(Boolean);
+
+const sentences=text
+.split(/[.!?]+/)
+.map(s=>s.trim())
+.filter(Boolean);
+
+/*
+Demo analiz.
+Real plagiat mənbə axtarışı növbəti mərhələdə API ilə qoşulacaq.
+*/
+
+let score=0;
+
+if(words.length<20){
+score=5;
+}else if(words.length<50){
+score=12;
+}else{
+score=Math.floor(Math.random()*46)+15;
+}
+
+let evaluation="Aşağı";
+let description=
+"Mətnin oxşarlıq səviyyəsi aşağı görünür.";
+
+if(score>=30 && score<60){
+evaluation="Orta";
+description=
+"Mətn daxilində müəyyən oxşarlıq ehtimalı var.";
+}
+
+if(score>=60){
+evaluation="Yüksək";
+description=
+"Mətnin bəzi hissələrinin başqa mənbələrlə oxşar olması ehtimalı yüksəkdir.";
+}
+
+document.getElementById("score").textContent=score+"%";
+
+document.getElementById("progress").style.width=score+"%";
+
+document.getElementById("wordCount").textContent=words.length;
+
+document.getElementById("sentenceCount").textContent=sentences.length;
+
+document.getElementById("evaluation").textContent=evaluation;
+
+document.getElementById("description").textContent=description;
+
+document.getElementById("statusBadge").textContent=
+score>=60?"Yüksək oxşarlıq":
+score>=30?"Orta oxşarlıq":
+"Aşağı oxşarlıq";
+
+const sourceList=document.getElementById("sourceList");
+
+sourceList.innerHTML="";
+
+if(score<30){
+
+sourceList.innerHTML=`
+<div class="empty">
+Bu demo analizdə nəzərəçarpacaq uyğunluq tapılmadı.
+</div>
+`;
+
+}else{
+
+const count=Math.min(3,sentences.length);
+
+for(let i=0;i<count;i++){
+
+const sentence=sentences[i];
+
+const googleQuery=
+encodeURIComponent('"'+sentence+'"');
+
+sourceList.innerHTML+=`
+
+<div class="source">
+
+<div class="sentence">
+“${escapeHTML(sentence)}”
+</div>
+
+<div class="source-name">
+Mümkün uyğun mənbə
+</div>
+
+<a href="https://www.google.com/search?q=${googleQuery}"
+target="_blank">
+Bu cümləni internetdə axtar →
+</a>
+
+</div>
+`;
+
+}
+
+}
+
+document.getElementById("result").classList.add("show");
+
+window.scrollTo({
+top:document.getElementById("result").offsetTop-20,
+behavior:"smooth"
+});
+
+}
+
+function clearText(){
+
+textInput.value="";
+
+updateCounter();
+
+document.getElementById("result").classList.remove("show");
+
+}
+
+function escapeHTML(text){
+
+return text
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+</script>
 
 </body>
 </html>
